@@ -1,0 +1,158 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<title>Fantasy Football App</title>
+<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<style>
+body {
+font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.container {
+max-width: 600px;
+padding: 30px;
+}
+
+form {
+display: flex;
+flex-direction: column;
+gap: 20px;
+}
+
+.button-container {
+display: flex;
+gap: 12px;
+justify-content: flex-end;
+}
+
+.mdc-text-field {
+width: 100%;
+}
+
+.visually-hidden {
+display: none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Fantasy Football App</h1>
+<p>
+Welcome to the best fantasy football app out there! Here, you can create and join leagues, draft players, manage your team,
+and chat with your league mates.
+</p>
+<form id="login-form">
+<div class="mdc-text-field mdc-text-field--filled">
+<input type="text" class="mdc-text-field__input" name="username" id="username-field" required>
+<label class="mdc-floating-label" for="username-field">Username</label>
+<div class="mdc-line-ripple"></div>
+</div>
+<div class="mdc-text-field mdc-text-field--filled">
+<input type="password" class="mdc-text-field__input" name="password" id="password-field" required>
+<label class="mdc-floating-label" for="password-field">Password</label>
+<div class="mdc-line-ripple"></div>
+</div>
+<div class="button-container">
+<button class="mdc-button mdc-button--raised mdc-button--touch" id="login-button" type="submit">
+<span class="mdc-button__ripple"></span>
+<span class="mdc-button__touch"></span>
+<span class="mdc-button__label">Login</span>
+<span class="loading visually-hidden">Loading...</span>
+</button>
+<a class="mdc-button mdc-button--touch" href="/signup">
+<span class="mdc-button__ripple"></span>
+<span class="mdc-button__touch"></span>
+<span class="mdc-button__label">Sign Up</span>
+</a>
+</div>
+</form>
+</div>
+
+<script>
+(function () {
+const form = document.getElementById('login-form');
+const usernameField = document.getElementById('username-field');
+const passwordField = document.getElementById('password-field');
+const loginButton = document.getElementById('login-button');
+const loading = document.querySelector('.loading');
+
+const textFields = document.querySelectorAll('.mdc-text-field');
+textFields.forEach((field) =>
+mdc.textField.MDCTextField.attachTo(field)
+);
+
+const buttons = document.querySelectorAll('.mdc-button');
+buttons.forEach((btn) => mdc.ripple.MDCRipple.attachTo(btn));
+
+const toggleElementDisable = (element, disable) => {
+disable ? element.setAttribute('disabled', true) : element.removeAttribute('disabled');
+}
+
+const toggleVisuallyHidden = (element, remove) => {
+remove ? element.classList.remove('visually-hidden') : element.classList.add('visually-hidden');
+}
+
+const checkSyntax = (result) => {
+if (result.includes('syntax')) {
+alert('There was an issue with your syntax. Please check the console for more details.');
+console.error(result);
+}
+}
+
+const displayError = (message) => {
+alert(message);
+}
+
+const submitForm = (e) => {
+e.preventDefault();
+
+toggleElementDisable(loginButton, true);
+toggleVisuallyHidden(loading, true);
+toggleVisuallyHidden(loginButton, false);
+
+const username = usernameField.value;
+const password = passwordField.value;
+
+const requestBody = {
+username,
+password
+};
+
+fetch('/login', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json'
+},
+body: JSON.stringify(requestBody)
+})
+.then((res) => {
+toggleVisuallyHidden(loading, false);
+toggleVisuallyHidden(loginButton, true);
+if (res.ok) {
+window.location.href = '/leagues';
+} else {
+res.json()
+.then((data) => displayError(data.message))
+.catch((error) => checkSyntax(error));
+}
+})
+.catch((error) => {
+toggleVisuallyHidden(loading, false);
+toggleVisuallyHidden(loginButton, true);
+checkSyntax(error);
+});
+};
+
+form.addEventListener('submit', submitForm);
+})();
+</script>
+</body>
+
+</html>
+
+
