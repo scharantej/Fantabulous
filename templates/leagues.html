@@ -1,0 +1,81 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8" />
+<title>Leagues</title>
+<link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet" />
+<script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
+<style>
+body {
+font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+.container {
+max-width: 600px;
+padding: 30px;
+}
+
+.leagues-list {
+list-style-type: none;
+display: flex;
+flex-direction: column;
+gap: 12px;
+border: 1px solid #efefef;
+padding: 16px;
+margin: 20px 0;
+}
+
+.league-item {
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.league-name {
+font-weight: bold;
+}
+
+.button-container {
+display: flex;
+gap: 12px;
+}
+
+.mdc-button--outlined {
+margin-left: 12px;
+}
+
+.visually-hidden {
+display: none;
+}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h1>Leagues</h1>
+<p>
+Here are the leagues you're a part of. Click on a league to view its dashboard.
+</p>
+<div class="leagues-list">
+{{% for league in leagues %}}
+<div class="league-item">
+<div class="league-name">{{ league.name }}</div>
+<div class="button-container">
+<a class="mdc-button mdc-button--touch" href="{{ url_for('league_dashboard', league_id=league.id) }}">
+<span class="mdc-button__ripple"></span>
+<span class="mdc-button__touch"></span>
+<span class="mdc-button__label">Dashboard</span>
+</a>
+<button class="mdc-button mdc-button--outlined mdc-button--touch" id="leave-league-button-{{ league.id }}">
+<span class="mdc-button__ripple"></span>
+<span class="mdc-button__touch"></span>
+<span class="mdc-button__label">Leave League</span>
+</button>
+</div>
+</div>
+{{% endfor %}}
+</div>
+<div class="button-container">
+<a class="mdc-button
